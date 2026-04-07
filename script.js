@@ -7,6 +7,7 @@ const ctx = canvas.getContext('2d');
 const canvasWidth = canvas.width;
 const canvasHeight = canvas.height;
 const GAME_DURATION_SECONDS = 60;
+const HITMARKER_DURATION_MS = 140;
 
 const target = {
   x: 100,
@@ -19,6 +20,7 @@ let timeLeft = GAME_DURATION_SECONDS;
 let gameStarted = false;
 let timerIntervalId = null;
 let gameEndTimestamp = 0;
+let hitmarkerVisibleUntil = 0;
 
 function randomRange(min, max) {
   return Math.random() * (max - min) + min;
@@ -78,6 +80,32 @@ function drawCrosshair() {
   ctx.closePath();
 }
 
+function drawHitmarker() {
+  if (performance.now() > hitmarkerVisibleUntil) {
+    return;
+  }
+
+  const centerX = canvasWidth / 2;
+  const centerY = canvasHeight / 2;
+  const innerGap = 8;
+  const outerSize = 18;
+
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 2;
+
+  ctx.beginPath();
+  ctx.moveTo(centerX - innerGap, centerY - innerGap);
+  ctx.lineTo(centerX - outerSize, centerY - outerSize);
+  ctx.moveTo(centerX + innerGap, centerY - innerGap);
+  ctx.lineTo(centerX + outerSize, centerY - outerSize);
+  ctx.moveTo(centerX - innerGap, centerY + innerGap);
+  ctx.lineTo(centerX - outerSize, centerY + outerSize);
+  ctx.moveTo(centerX + innerGap, centerY + innerGap);
+  ctx.lineTo(centerX + outerSize, centerY + outerSize);
+  ctx.stroke();
+  ctx.closePath();
+}
+
 function render() {
   drawBackground();
   drawScore();
@@ -88,6 +116,7 @@ function render() {
   }
 
   drawCrosshair();
+  drawHitmarker();
 }
 
 function isTargetHit(clickX, clickY) {
@@ -111,6 +140,7 @@ function onCanvasClick(event) {
 
   if (isTargetHit(clickX, clickY)) {
     score += 1;
+    hitmarkerVisibleUntil = performance.now() + HITMARKER_DURATION_MS;
     placeTargetRandomly();
     render();
   }
@@ -120,6 +150,7 @@ function stopGame() {
   gameStarted = false;
   clearInterval(timerIntervalId);
   timerIntervalId = null;
+  hitmarkerVisibleUntil = 0;
   startButton.disabled = false;
   startButton.textContent = 'START';
   gameMessage.textContent = `Koniec czasu! Twój końcowy wynik: ${score}`;
@@ -153,6 +184,7 @@ function startGame() {
   score = 0;
   timeLeft = GAME_DURATION_SECONDS;
   gameStarted = true;
+  hitmarkerVisibleUntil = 0;
   gameMessage.textContent = '';
   gameWrapper.classList.remove('hidden');
   startButton.disabled = true;
