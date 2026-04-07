@@ -5,6 +5,7 @@ const ctx = canvas.getContext('2d');
 
 const canvasWidth = canvas.width;
 const canvasHeight = canvas.height;
+const GAME_DURATION_SECONDS = 60;
 
 const target = {
   x: 100,
@@ -13,7 +14,9 @@ const target = {
 };
 
 let score = 0;
+let timeLeft = GAME_DURATION_SECONDS;
 let gameStarted = false;
+let timerIntervalId = null;
 
 function randomRange(min, max) {
   return Math.random() * (max - min) + min;
@@ -33,6 +36,14 @@ function drawScore() {
   ctx.fillStyle = '#ffffff';
   ctx.font = '24px Arial';
   ctx.fillText(`Score: ${score}`, 16, 34);
+}
+
+function drawTimer() {
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '24px Arial';
+  const timerText = `Time: ${timeLeft}s`;
+  const timerTextWidth = ctx.measureText(timerText).width;
+  ctx.fillText(timerText, canvasWidth - timerTextWidth - 16, 34);
 }
 
 function drawTarget() {
@@ -68,6 +79,7 @@ function drawCrosshair() {
 function render() {
   drawBackground();
   drawScore();
+  drawTimer();
   drawTarget();
   drawCrosshair();
 }
@@ -80,6 +92,10 @@ function isTargetHit(clickX, clickY) {
 }
 
 function onCanvasClick(event) {
+  if (!gameStarted) {
+    return;
+  }
+
   const rect = canvas.getBoundingClientRect();
   const scaleX = canvasWidth / rect.width;
   const scaleY = canvasHeight / rect.height;
@@ -94,11 +110,35 @@ function onCanvasClick(event) {
   }
 }
 
-function startGame() {
-  if (gameStarted) {
-    return;
-  }
+function stopGame() {
+  gameStarted = false;
+  clearInterval(timerIntervalId);
+  timerIntervalId = null;
+  startButton.disabled = false;
+  startButton.textContent = 'START';
+  render();
+  alert(`Koniec czasu! Twój wynik: ${score}`);
+}
 
+function startTimer() {
+  clearInterval(timerIntervalId);
+
+  timerIntervalId = setInterval(() => {
+    timeLeft -= 1;
+
+    if (timeLeft <= 0) {
+      timeLeft = 0;
+      stopGame();
+      return;
+    }
+
+    render();
+  }, 1000);
+}
+
+function startGame() {
+  score = 0;
+  timeLeft = GAME_DURATION_SECONDS;
   gameStarted = true;
   gameWrapper.classList.remove('hidden');
   startButton.disabled = true;
@@ -106,6 +146,7 @@ function startGame() {
 
   placeTargetRandomly();
   render();
+  startTimer();
 }
 
 startButton.addEventListener('click', startGame);
