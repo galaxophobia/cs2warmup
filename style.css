@@ -79,9 +79,6 @@ canvas {
 }
 
 #gameCanvas {
-  cursor: none !important;
-}
-#gameCanvas {
   background: var(--canvas-bg);
   border: 2px solid #ffffff;
   max-width: 100%;
