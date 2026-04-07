@@ -1,10 +1,12 @@
 const startButton = document.getElementById('startButton');
 const gameWrapper = document.getElementById('gameWrapper');
+const gameMessage = document.getElementById('gameMessage');
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 const canvasWidth = canvas.width;
 const canvasHeight = canvas.height;
+const GAME_DURATION_SECONDS = 60;
 
 const target = {
   x: 100,
@@ -13,7 +15,10 @@ const target = {
 };
 
 let score = 0;
+let timeLeft = GAME_DURATION_SECONDS;
 let gameStarted = false;
+let timerIntervalId = null;
+let gameEndTimestamp = 0;
 
 function randomRange(min, max) {
   return Math.random() * (max - min) + min;
@@ -33,6 +38,14 @@ function drawScore() {
   ctx.fillStyle = '#ffffff';
   ctx.font = '24px Arial';
   ctx.fillText(`Score: ${score}`, 16, 34);
+}
+
+function drawTimer() {
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '24px Arial';
+  const timerText = `Time: ${timeLeft}s`;
+  const timerTextWidth = ctx.measureText(timerText).width;
+  ctx.fillText(timerText, canvasWidth - timerTextWidth - 16, 34);
 }
 
 function drawTarget() {
@@ -68,7 +81,12 @@ function drawCrosshair() {
 function render() {
   drawBackground();
   drawScore();
-  drawTarget();
+  drawTimer();
+
+  if (gameStarted) {
+    drawTarget();
+  }
+
   drawCrosshair();
 }
 
@@ -80,6 +98,10 @@ function isTargetHit(clickX, clickY) {
 }
 
 function onCanvasClick(event) {
+  if (!gameStarted || timeLeft <= 0) {
+    return;
+  }
+
   const rect = canvas.getBoundingClientRect();
   const scaleX = canvasWidth / rect.width;
   const scaleY = canvasHeight / rect.height;
@@ -94,18 +116,50 @@ function onCanvasClick(event) {
   }
 }
 
-function startGame() {
-  if (gameStarted) {
-    return;
-  }
+function stopGame() {
+  gameStarted = false;
+  clearInterval(timerIntervalId);
+  timerIntervalId = null;
+  startButton.disabled = false;
+  startButton.textContent = 'START';
+  gameMessage.textContent = `Koniec czasu! Twój wynik: ${score}`;
+  render();
+}
 
+function updateTimeLeft() {
+  const remainingMilliseconds = Math.max(0, gameEndTimestamp - Date.now());
+  timeLeft = Math.ceil(remainingMilliseconds / 1000);
+}
+
+function startTimer() {
+  clearInterval(timerIntervalId);
+
+  gameEndTimestamp = Date.now() + GAME_DURATION_SECONDS * 1000;
+  timerIntervalId = setInterval(() => {
+    updateTimeLeft();
+
+    if (timeLeft <= 0) {
+      timeLeft = 0;
+      stopGame();
+      return;
+    }
+
+    render();
+  }, 100);
+}
+
+function startGame() {
+  score = 0;
+  timeLeft = GAME_DURATION_SECONDS;
   gameStarted = true;
+  gameMessage.textContent = '';
   gameWrapper.classList.remove('hidden');
   startButton.disabled = true;
   startButton.textContent = 'STARTED';
 
   placeTargetRandomly();
   render();
+  startTimer();
 }
 
 startButton.addEventListener('click', startGame);
