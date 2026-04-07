@@ -1,5 +1,6 @@
 const startButton = document.getElementById('startButton');
 const gameWrapper = document.getElementById('gameWrapper');
+const gameMessage = document.getElementById('gameMessage');
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -17,6 +18,7 @@ let score = 0;
 let timeLeft = GAME_DURATION_SECONDS;
 let gameStarted = false;
 let timerIntervalId = null;
+let gameEndTimestamp = 0;
 
 function randomRange(min, max) {
   return Math.random() * (max - min) + min;
@@ -80,7 +82,11 @@ function render() {
   drawBackground();
   drawScore();
   drawTimer();
-  drawTarget();
+
+  if (gameStarted) {
+    drawTarget();
+  }
+
   drawCrosshair();
 }
 
@@ -92,7 +98,7 @@ function isTargetHit(clickX, clickY) {
 }
 
 function onCanvasClick(event) {
-  if (!gameStarted) {
+  if (!gameStarted || timeLeft <= 0) {
     return;
   }
 
@@ -116,15 +122,21 @@ function stopGame() {
   timerIntervalId = null;
   startButton.disabled = false;
   startButton.textContent = 'START';
+  gameMessage.textContent = `Koniec czasu! Twój wynik: ${score}`;
   render();
-  alert(`Koniec czasu! Twój wynik: ${score}`);
+}
+
+function updateTimeLeft() {
+  const remainingMilliseconds = Math.max(0, gameEndTimestamp - Date.now());
+  timeLeft = Math.ceil(remainingMilliseconds / 1000);
 }
 
 function startTimer() {
   clearInterval(timerIntervalId);
 
+  gameEndTimestamp = Date.now() + GAME_DURATION_SECONDS * 1000;
   timerIntervalId = setInterval(() => {
-    timeLeft -= 1;
+    updateTimeLeft();
 
     if (timeLeft <= 0) {
       timeLeft = 0;
@@ -133,13 +145,14 @@ function startTimer() {
     }
 
     render();
-  }, 1000);
+  }, 100);
 }
 
 function startGame() {
   score = 0;
   timeLeft = GAME_DURATION_SECONDS;
   gameStarted = true;
+  gameMessage.textContent = '';
   gameWrapper.classList.remove('hidden');
   startButton.disabled = true;
   startButton.textContent = 'STARTED';
