@@ -10,6 +10,11 @@ let animationFrameId = null;
 
 let target = null;
 let hitmarkerFrames = 0;
+let hitmarkerPosition = null;
+let crosshairPosition = {
+  x: canvas.width / 2,
+  y: canvas.height / 2
+};
 
 function spawnTarget() {
   const size = 30;
@@ -25,6 +30,11 @@ function resetGame() {
   score = 0;
   timeLeft = 60;
   hitmarkerFrames = 0;
+  hitmarkerPosition = null;
+  crosshairPosition = {
+    x: canvas.width / 2,
+    y: canvas.height / 2
+  };
   spawnTarget();
 }
 
@@ -79,41 +89,39 @@ function drawHud() {
 }
 
 function drawCrosshair() {
-  const cx = canvas.width / 2;
-  const cy = canvas.height / 2;
+  const { x, y } = crosshairPosition;
 
   ctx.strokeStyle = "#00ff66";
   ctx.lineWidth = 2;
 
   ctx.beginPath();
-  ctx.moveTo(cx - 10, cy);
-  ctx.lineTo(cx + 10, cy);
-  ctx.moveTo(cx, cy - 10);
-  ctx.lineTo(cx, cy + 10);
+  ctx.moveTo(x - 10, y);
+  ctx.lineTo(x + 10, y);
+  ctx.moveTo(x, y - 10);
+  ctx.lineTo(x, y + 10);
   ctx.stroke();
 }
 
 function drawHitmarker() {
-  if (hitmarkerFrames <= 0) return;
+  if (hitmarkerFrames <= 0 || !hitmarkerPosition) return;
 
-  const cx = canvas.width / 2;
-  const cy = canvas.height / 2;
+  const { x, y } = hitmarkerPosition;
 
   ctx.strokeStyle = "white";
   ctx.lineWidth = 2;
 
   ctx.beginPath();
-  ctx.moveTo(cx - 12, cy - 12);
-  ctx.lineTo(cx - 4, cy - 4);
+  ctx.moveTo(x - 12, y - 12);
+  ctx.lineTo(x - 4, y - 4);
 
-  ctx.moveTo(cx + 12, cy - 12);
-  ctx.lineTo(cx + 4, cy - 4);
+  ctx.moveTo(x + 12, y - 12);
+  ctx.lineTo(x + 4, y - 4);
 
-  ctx.moveTo(cx - 12, cy + 12);
-  ctx.lineTo(cx - 4, cy + 4);
+  ctx.moveTo(x - 12, y + 12);
+  ctx.lineTo(x - 4, y + 4);
 
-  ctx.moveTo(cx + 12, cy + 12);
-  ctx.lineTo(cx + 4, cy + 4);
+  ctx.moveTo(x + 12, y + 12);
+  ctx.lineTo(x + 4, y + 4);
   ctx.stroke();
 
   hitmarkerFrames--;
@@ -145,11 +153,20 @@ startBtn.addEventListener("click", () => {
   render();
 });
 
+canvas.addEventListener("mousemove", (event) => {
+  if (!gameRunning) return;
+
+  crosshairPosition = {
+    x: Math.max(0, Math.min(canvas.width, event.offsetX)),
+    y: Math.max(0, Math.min(canvas.height, event.offsetY))
+  };
+});
+
 canvas.addEventListener("click", () => {
   if (!gameRunning || !target) return;
 
-  const shotX = canvas.width / 2;
-  const shotY = canvas.height / 2;
+  const shotX = crosshairPosition.x;
+  const shotY = crosshairPosition.y;
 
   const dx = shotX - (target.x + target.size / 2);
   const dy = shotY - (target.y + target.size / 2);
@@ -158,6 +175,7 @@ canvas.addEventListener("click", () => {
   if (distance <= target.size / 2) {
     score++;
     hitmarkerFrames = 8;
+    hitmarkerPosition = { x: shotX, y: shotY };
     spawnTarget();
   }
 });
