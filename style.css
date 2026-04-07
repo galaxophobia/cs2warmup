@@ -71,7 +71,7 @@ h1 {
   display: none;
 }
 canvas {
-  display: none;
+  display: block;
   background: #111;
   border: 2px solid #fff;
   margin: 0 auto;
@@ -83,5 +83,4 @@ canvas {
   border: 2px solid #ffffff;
   max-width: 100%;
   height: auto;
-  cursor: none;
 }
