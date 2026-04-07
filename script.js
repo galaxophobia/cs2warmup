@@ -122,7 +122,7 @@ function stopGame() {
   timerIntervalId = null;
   startButton.disabled = false;
   startButton.textContent = 'START';
-  gameMessage.textContent = `Koniec czasu! Twój wynik: ${score}`;
+  gameMessage.textContent = `Koniec czasu! Twój końcowy wynik: ${score}`;
   render();
 }
 
@@ -149,6 +149,7 @@ function startTimer() {
 }
 
 function startGame() {
+  clearInterval(timerIntervalId);
   score = 0;
   timeLeft = GAME_DURATION_SECONDS;
   gameStarted = true;
