@@ -75,5 +75,5 @@ h1 {
   border: 2px solid #ffffff;
   max-width: 100%;
   height: auto;
-  cursor: crosshair;
+  cursor: none;
 }
