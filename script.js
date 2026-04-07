@@ -145,18 +145,14 @@ startBtn.addEventListener("click", () => {
   render();
 });
 
-canvas.addEventListener("click", (e) => {
+canvas.addEventListener("click", () => {
   if (!gameRunning || !target) return;
 
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
+  const shotX = canvas.width / 2;
+  const shotY = canvas.height / 2;
 
-  const mouseX = (e.clientX - rect.left) * scaleX;
-  const mouseY = (e.clientY - rect.top) * scaleY;
-
-  const dx = mouseX - (target.x + target.size / 2);
-  const dy = mouseY - (target.y + target.size / 2);
+  const dx = shotX - (target.x + target.size / 2);
+  const dy = shotY - (target.y + target.size / 2);
   const distance = Math.sqrt(dx * dx + dy * dy);
 
   if (distance <= target.size / 2) {
