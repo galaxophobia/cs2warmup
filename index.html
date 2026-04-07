@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,18 +7,16 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main class="container">
+  <div class="container">
     <h1>CS2 Warmup</h1>
-    <p class="description">
-      Prosty trening celowania: klikaj czerwony target i poprawiaj swój wynik.
-    </p>
-    <button id="startButton" class="start-button">START</button>
-    <p id="gameMessage" class="description" aria-live="polite"></p>
+    <p class="description">Simple aim trainer prototype</p>
 
-    <div id="gameWrapper" class="game-wrapper hidden">
-      <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <button id="startBtn" class="start-button">START</button>
+
+    <div class="game-wrapper">
+      <canvas id="gameCanvas" class="hidden" width="800" height="600"></canvas>
     </div>
-  </main>
+  </div>
 
   <script src="script.js"></script>
 </body>
