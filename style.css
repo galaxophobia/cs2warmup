@@ -70,7 +70,17 @@ h1 {
 .hidden {
   display: none;
 }
+canvas {
+  display: none;
+  background: #111;
+  border: 2px solid #fff;
+  margin: 0 auto;
+  cursor: none;
+}
 
+#gameCanvas {
+  cursor: none !important;
+}
 #gameCanvas {
   background: var(--canvas-bg);
   border: 2px solid #ffffff;
