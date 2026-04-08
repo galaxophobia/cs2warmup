@@ -7,6 +7,7 @@ const gameOverOverlay = document.getElementById("gameOverOverlay");
 const scoreText = document.getElementById("scoreText");
 const scoreFeedbackText = document.getElementById("scoreFeedbackText");
 const bestText = document.getElementById("bestText");
+const accuracyText = document.getElementById("accuracyText");
 const nickText = document.getElementById("nickText");
 const challengeStatusText = document.getElementById("challengeStatusText");
 const dailyChallengeText = document.getElementById("dailyChallengeText");
@@ -22,6 +23,8 @@ const DAILY_CHALLENGE_MIN_SCORE = 25;
 const LEADERBOARD_LIMIT = 5;
 
 let score = 0;
+let totalShots = 0;
+let totalHits = 0;
 let bestScore = 0;
 let timeLeft = 60;
 let gameRunning = false;
@@ -201,6 +204,15 @@ function updateScoreFeedbackUI(previousBestScore) {
   scoreFeedbackText.classList.add("feedback-away");
 }
 
+function getAccuracyPercentage() {
+  if (totalShots === 0) return 0;
+  return Math.round((totalHits / totalShots) * 100);
+}
+
+function formatAccuracyText() {
+  return `Accuracy: ${getAccuracyPercentage()}%`;
+}
+
 function spawnTarget() {
   const size = 24;
   const edgePadding = 20;
@@ -258,6 +270,8 @@ function spawnTarget() {
 
 function resetGame() {
   score = 0;
+  totalShots = 0;
+  totalHits = 0;
   timeLeft = 60;
   hitmarkerFrames = 0;
   hitmarkerPosition = null;
@@ -340,6 +354,7 @@ function stopGame() {
   scoreText.textContent = `Score: ${score}`;
   updateScoreFeedbackUI(previousBestScore);
   bestText.textContent = `Best: ${bestScore}`;
+  accuracyText.textContent = formatAccuracyText();
   nickText.textContent = `Nick: ${playerNickname}`;
   updateChallengeStatusUI();
   gameOverOverlay.classList.remove("hidden");
@@ -408,7 +423,7 @@ function drawHudBox(x, y, width, height) {
 }
 
 function drawHud() {
-  drawHudBox(10, 10, 250, 98);
+  drawHudBox(10, 10, 250, 120);
 
   ctx.fillStyle = "#ffffff";
   ctx.font = "700 30px Arial";
@@ -421,6 +436,10 @@ function drawHud() {
   ctx.fillStyle = "#9bd7ff";
   ctx.font = "600 15px Arial";
   ctx.fillText(`Best: ${bestScore}`, 20, 96);
+
+  ctx.fillStyle = "#9bd7ff";
+  ctx.font = "600 15px Arial";
+  ctx.fillText(formatAccuracyText(), 20, 116);
 
   ctx.textAlign = "right";
   ctx.fillStyle = "#9bd7ff";
@@ -566,6 +585,8 @@ canvas.addEventListener("mousemove", (event) => {
 canvas.addEventListener("click", () => {
   if (!gameRunning || !target) return;
 
+  totalShots++;
+
   const shotX = crosshairPosition.x;
   const shotY = crosshairPosition.y;
 
@@ -578,6 +599,7 @@ canvas.addEventListener("click", () => {
     const targetCenterY = target.y + target.size / 2;
 
     score++;
+    totalHits++;
     hitmarkerFrames = 8;
     hitmarkerPosition = { x: shotX, y: shotY };
     targetHitEffect = {
