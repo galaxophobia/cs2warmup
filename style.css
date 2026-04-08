@@ -122,6 +122,61 @@ h1 {
   margin-right: auto;
 }
 
+.leaderboard {
+  max-width: 520px;
+  margin: 24px auto 0;
+  padding: 14px 16px;
+  border: 1px solid #2f3b4c;
+  border-radius: 12px;
+  background: rgba(10, 15, 21, 0.62);
+  text-align: left;
+}
+
+.leaderboard-title {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  color: #9bd7ff;
+}
+
+.leaderboard-list {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.leaderboard-item {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(79, 98, 118, 0.35);
+}
+
+.leaderboard-item:last-child {
+  border-bottom: none;
+}
+
+.leaderboard-place {
+  color: #ffd166;
+  font-weight: 700;
+}
+
+.leaderboard-nick {
+  color: #e6edf3;
+  word-break: break-word;
+}
+
+.leaderboard-score {
+  color: #57f287;
+  font-weight: 700;
+}
+
+.leaderboard-empty {
+  list-style: none;
+  margin-left: -22px;
+  color: #9bb7d1;
+  font-style: italic;
+}
+
 .hidden {
   display: none !important;
 }

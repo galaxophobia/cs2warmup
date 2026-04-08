@@ -10,12 +10,15 @@ const nickText = document.getElementById("nickText");
 const challengeStatusText = document.getElementById("challengeStatusText");
 const dailyChallengeText = document.getElementById("dailyChallengeText");
 const playAgainBtn = document.getElementById("playAgainBtn");
+const leaderboardList = document.getElementById("leaderboardList");
 
 const BEST_SCORE_KEY = "cs2warmup-best-score";
 const NICKNAME_KEY = "cs2warmup-nickname";
+const LEADERBOARD_KEY = "cs2warmup-top-scores";
 const DEFAULT_NICKNAME = "Player";
 const DAILY_CHALLENGE_TEXT = "Score 25 or more in one run";
 const DAILY_CHALLENGE_MIN_SCORE = 25;
+const LEADERBOARD_LIMIT = 5;
 
 let score = 0;
 let bestScore = 0;
@@ -27,6 +30,7 @@ let timerInterval = null;
 let countdownInterval = null;
 let animationFrameId = null;
 let playerNickname = DEFAULT_NICKNAME;
+let leaderboardEntries = [];
 
 let target = null;
 let hitmarkerFrames = 0;
@@ -69,6 +73,94 @@ function loadBestScore() {
 
 function saveBestScore() {
   localStorage.setItem(BEST_SCORE_KEY, String(bestScore));
+}
+
+function normalizeLeaderboardEntries(value) {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .map((entry) => {
+      const nickname = sanitizeNickname(entry && entry.nickname ? entry.nickname : DEFAULT_NICKNAME);
+      const entryScore = Number(entry && entry.score);
+
+      if (!Number.isFinite(entryScore) || entryScore < 0) return null;
+
+      return {
+        nickname,
+        score: Math.floor(entryScore)
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, LEADERBOARD_LIMIT);
+}
+
+function loadLeaderboard() {
+  try {
+    const rawEntries = localStorage.getItem(LEADERBOARD_KEY);
+    if (!rawEntries) {
+      leaderboardEntries = [];
+      return;
+    }
+
+    leaderboardEntries = normalizeLeaderboardEntries(JSON.parse(rawEntries));
+  } catch (error) {
+    leaderboardEntries = [];
+  }
+}
+
+function saveLeaderboard() {
+  localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(leaderboardEntries));
+}
+
+function renderLeaderboard() {
+  leaderboardList.innerHTML = "";
+
+  if (leaderboardEntries.length === 0) {
+    const emptyItem = document.createElement("li");
+    emptyItem.className = "leaderboard-empty";
+    emptyItem.textContent = "No scores yet. Play your first round!";
+    leaderboardList.appendChild(emptyItem);
+    return;
+  }
+
+  leaderboardEntries.forEach((entry, index) => {
+    const item = document.createElement("li");
+    item.className = "leaderboard-item";
+
+    const place = document.createElement("span");
+    place.className = "leaderboard-place";
+    place.textContent = `${index + 1}.`;
+
+    const nick = document.createElement("span");
+    nick.className = "leaderboard-nick";
+    nick.textContent = entry.nickname;
+
+    const entryScore = document.createElement("span");
+    entryScore.className = "leaderboard-score";
+    entryScore.textContent = String(entry.score);
+
+    item.appendChild(place);
+    item.appendChild(nick);
+    item.appendChild(entryScore);
+    leaderboardList.appendChild(item);
+  });
+}
+
+function trySaveLeaderboardScore() {
+  const qualifies =
+    leaderboardEntries.length < LEADERBOARD_LIMIT ||
+    score > leaderboardEntries[leaderboardEntries.length - 1].score;
+
+  if (!qualifies) return;
+
+  leaderboardEntries.push({
+    nickname: playerNickname,
+    score
+  });
+  leaderboardEntries = normalizeLeaderboardEntries(leaderboardEntries);
+  saveLeaderboard();
+  renderLeaderboard();
 }
 
 function isDailyChallengeCompleted() {
@@ -200,6 +292,7 @@ function stopGame() {
     bestScore = score;
     saveBestScore();
   }
+  trySaveLeaderboardScore();
 
   scoreText.textContent = `Score: ${score}`;
   bestText.textContent = `Best: ${bestScore}`;
@@ -451,3 +544,5 @@ dailyChallengeText.textContent = DAILY_CHALLENGE_TEXT;
 updateChallengeStatusUI();
 loadBestScore();
 loadNickname();
+loadLeaderboard();
+renderLeaderboard();
