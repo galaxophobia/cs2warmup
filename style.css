@@ -18,15 +18,17 @@
 body {
   margin: 0;
   min-height: 100vh;
+  display: flex;
+  justify-content: center;
   font-family: Arial, sans-serif;
   background: radial-gradient(circle at top, #1a2433 0%, var(--bg-main) 55%);
   color: var(--text-main);
 }
 
 .app-shell {
-  width: min(95vw, 1260px);
+  width: min(96vw, 1080px);
   margin: 24px auto;
-  padding: 20px;
+  padding: 22px;
   border: 1px solid var(--border);
   border-radius: 14px;
   background: rgba(11, 16, 24, 0.92);
@@ -86,12 +88,10 @@ h1 {
   line-height: 1.4;
 }
 
-.platform-grid {
+.platform-main {
   margin-top: 18px;
   display: grid;
   gap: 16px;
-  grid-template-columns: minmax(220px, 260px) minmax(0, 1fr) minmax(240px, 300px);
-  align-items: start;
 }
 
 .platform-card {
@@ -118,7 +118,9 @@ h1 {
 }
 
 .game-card {
+  width: 100%;
   text-align: center;
+  padding: 18px;
 }
 
 .player-controls {
@@ -172,8 +174,24 @@ h1 {
   justify-content: center;
   position: relative;
   width: fit-content;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
+}
+
+.support-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.daily-card,
+.leaderboard {
+  min-height: 130px;
+}
+
+.daily-card {
+  text-align: left;
 }
 
 .leaderboard {
@@ -287,8 +305,8 @@ h1 {
   font-weight: 700;
 }
 
-@media (max-width: 1150px) {
-  .platform-grid {
+@media (max-width: 900px) {
+  .support-grid {
     grid-template-columns: 1fr;
   }
 

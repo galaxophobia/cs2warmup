@@ -24,13 +24,8 @@
       </p>
     </section>
 
-    <main class="platform-grid">
-      <section class="platform-card daily-card" aria-live="polite">
-        <h2 class="card-title">Daily Challenge</h2>
-        <p id="dailyChallengeText" class="daily-challenge-text">Score 25 or more in one run</p>
-      </section>
-
-      <section class="platform-card game-card">
+    <main class="platform-main">
+      <section class="platform-card game-card" aria-label="Aim trainer panel">
         <div class="player-controls">
           <label for="nicknameInput" class="nickname-label">Nick:</label>
           <input
@@ -65,9 +60,16 @@
         </div>
       </section>
 
-      <section class="platform-card leaderboard" aria-live="polite">
-        <h2 class="card-title">Local Hall of Fame</h2>
-        <ol id="leaderboardList" class="leaderboard-list"></ol>
+      <section class="support-grid" aria-label="Additional stats panels">
+        <section class="platform-card daily-card" aria-live="polite">
+          <h2 class="card-title">Daily Challenge</h2>
+          <p id="dailyChallengeText" class="daily-challenge-text">Score 25 or more in one run</p>
+        </section>
+
+        <section class="platform-card leaderboard" aria-live="polite">
+          <h2 class="card-title">Local Hall of Fame</h2>
+          <ol id="leaderboardList" class="leaderboard-list"></ol>
+        </section>
       </section>
     </main>
   </div>
