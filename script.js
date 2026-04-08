@@ -64,10 +64,55 @@ function saveBestScore() {
 
 function spawnTarget() {
   const size = 24;
+  const edgePadding = 20;
+  const minX = edgePadding;
+  const maxX = canvas.width - size - edgePadding;
+  const minY = edgePadding;
+  const maxY = canvas.height - size - edgePadding;
+
+  const hudSafeZone = {
+    x: 10,
+    y: 10,
+    width: 250,
+    height: 98
+  };
+  const hudPadding = 20;
+  const topLeftSafePadding = 70;
+
+  function isInsideRect(pointX, pointY, rect) {
+    return (
+      pointX >= rect.x &&
+      pointX <= rect.x + rect.width &&
+      pointY >= rect.y &&
+      pointY <= rect.y + rect.height
+    );
+  }
+
+  for (let attempt = 0; attempt < 80; attempt++) {
+    const x = minX + Math.random() * (maxX - minX);
+    const y = minY + Math.random() * (maxY - minY);
+    const centerX = x + size / 2;
+    const centerY = y + size / 2;
+
+    const isNearTopLeftCorner =
+      centerX < topLeftSafePadding && centerY < topLeftSafePadding;
+
+    const isOnHud = isInsideRect(centerX, centerY, {
+      x: hudSafeZone.x - hudPadding,
+      y: hudSafeZone.y - hudPadding,
+      width: hudSafeZone.width + hudPadding * 2,
+      height: hudSafeZone.height + hudPadding * 2
+    });
+
+    if (!isNearTopLeftCorner && !isOnHud) {
+      target = { x, y, size };
+      return;
+    }
+  }
 
   target = {
-    x: Math.random() * (canvas.width - size),
-    y: Math.random() * (canvas.height - size),
+    x: (canvas.width - size) / 2,
+    y: (canvas.height - size) / 2,
     size
   };
 }
