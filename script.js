@@ -24,6 +24,8 @@ let playerNickname = DEFAULT_NICKNAME;
 let target = null;
 let hitmarkerFrames = 0;
 let hitmarkerPosition = null;
+let targetHitEffect = null;
+let hitPulseEffect = null;
 let crosshairPosition = {
   x: canvas.width / 2,
   y: canvas.height / 2
@@ -122,6 +124,8 @@ function resetGame() {
   timeLeft = 60;
   hitmarkerFrames = 0;
   hitmarkerPosition = null;
+  targetHitEffect = null;
+  hitPulseEffect = null;
   crosshairPosition = {
     x: canvas.width / 2,
     y: canvas.height / 2
@@ -191,6 +195,43 @@ function drawTarget() {
     Math.PI * 2
   );
   ctx.fill();
+}
+
+function drawTargetHitEffect() {
+  if (!targetHitEffect) return;
+
+  const progress = targetHitEffect.frame / targetHitEffect.maxFrames;
+  const alpha = (1 - progress) * 0.55;
+  const radius = targetHitEffect.radius + progress * 7;
+
+  ctx.fillStyle = `rgba(255, 245, 245, ${alpha})`;
+  ctx.beginPath();
+  ctx.arc(targetHitEffect.x, targetHitEffect.y, radius, 0, Math.PI * 2);
+  ctx.fill();
+
+  targetHitEffect.frame++;
+  if (targetHitEffect.frame > targetHitEffect.maxFrames) {
+    targetHitEffect = null;
+  }
+}
+
+function drawHitPulseEffect() {
+  if (!hitPulseEffect) return;
+
+  const progress = hitPulseEffect.frame / hitPulseEffect.maxFrames;
+  const alpha = (1 - progress) * 0.45;
+  const radius = 8 + progress * 20;
+
+  ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(hitPulseEffect.x, hitPulseEffect.y, radius, 0, Math.PI * 2);
+  ctx.stroke();
+
+  hitPulseEffect.frame++;
+  if (hitPulseEffect.frame > hitPulseEffect.maxFrames) {
+    hitPulseEffect = null;
+  }
 }
 
 function drawHudBox(x, y, width, height) {
@@ -269,7 +310,9 @@ function render() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   drawTarget();
+  drawTargetHitEffect();
   drawHud();
+  drawHitPulseEffect();
   drawCrosshair();
   drawHitmarker();
 
@@ -304,9 +347,25 @@ canvas.addEventListener("click", () => {
   const distance = Math.sqrt(dx * dx + dy * dy);
 
   if (distance <= target.size / 2) {
+    const targetCenterX = target.x + target.size / 2;
+    const targetCenterY = target.y + target.size / 2;
+
     score++;
     hitmarkerFrames = 8;
     hitmarkerPosition = { x: shotX, y: shotY };
+    targetHitEffect = {
+      x: targetCenterX,
+      y: targetCenterY,
+      radius: target.size / 2,
+      frame: 0,
+      maxFrames: 8
+    };
+    hitPulseEffect = {
+      x: shotX,
+      y: shotY,
+      frame: 0,
+      maxFrames: 10
+    };
     spawnTarget();
   }
 });
