@@ -30,9 +30,14 @@
 
       <div id="gameOverOverlay" class="overlay hidden" aria-live="polite">
         <div class="overlay-panel">
-          <p id="scoreText" class="overlay-text">Your score: 0</p>
-          <p id="bestText" class="overlay-text">Best: 0</p>
-          <p id="nickText" class="overlay-text">Nick: Player</p>
+          <p class="overlay-title">Round Over</p>
+          <p id="scoreText" class="overlay-score">0</p>
+
+          <div class="overlay-stats">
+            <p id="bestText" class="overlay-text">Best: 0</p>
+            <p id="nickText" class="overlay-text">Nick: Player</p>
+          </div>
+
           <button id="playAgainBtn" class="start-button">Play Again</button>
         </div>
       </div>
