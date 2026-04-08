@@ -35,6 +35,8 @@ let countdownInterval = null;
 let animationFrameId = null;
 let playerNickname = DEFAULT_NICKNAME;
 let leaderboardEntries = [];
+let audioContext = null;
+let audioUnlocked = false;
 
 let target = null;
 let hitmarkerFrames = 0;
@@ -45,6 +47,97 @@ let crosshairPosition = {
   x: canvas.width / 2,
   y: canvas.height / 2
 };
+
+function canPlayRoundSound() {
+  return gameRunning && !countdownActive;
+}
+
+function getAudioContext() {
+  if (!audioContext) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return null;
+    audioContext = new AudioContextClass();
+  }
+
+  if (audioContext.state === "suspended") {
+    audioContext.resume();
+  }
+
+  return audioContext;
+}
+
+function unlockAudio() {
+  const context = getAudioContext();
+  if (!context || audioUnlocked) return;
+
+  const oscillator = context.createOscillator();
+  const gainNode = context.createGain();
+  const currentTime = context.currentTime;
+
+  gainNode.gain.setValueAtTime(0.0001, currentTime);
+  oscillator.frequency.setValueAtTime(220, currentTime);
+  oscillator.type = "sine";
+  oscillator.connect(gainNode);
+  gainNode.connect(context.destination);
+  oscillator.start(currentTime);
+  oscillator.stop(currentTime + 0.01);
+
+  audioUnlocked = true;
+}
+
+function playHitSound() {
+  if (!canPlayRoundSound()) return;
+
+  const context = getAudioContext();
+  if (!context) return;
+
+  const currentTime = context.currentTime;
+  const oscillator = context.createOscillator();
+  const gainNode = context.createGain();
+
+  oscillator.type = "triangle";
+  oscillator.frequency.setValueAtTime(720, currentTime);
+  oscillator.frequency.exponentialRampToValueAtTime(980, currentTime + 0.045);
+
+  gainNode.gain.setValueAtTime(0.0001, currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.16, currentTime + 0.01);
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, currentTime + 0.09);
+
+  oscillator.connect(gainNode);
+  gainNode.connect(context.destination);
+  oscillator.start(currentTime);
+  oscillator.stop(currentTime + 0.1);
+}
+
+function playMissSound() {
+  if (!canPlayRoundSound()) return;
+
+  const context = getAudioContext();
+  if (!context) return;
+
+  const currentTime = context.currentTime;
+  const oscillator = context.createOscillator();
+  const gainNode = context.createGain();
+  const filter = context.createBiquadFilter();
+
+  oscillator.type = "sawtooth";
+  oscillator.frequency.setValueAtTime(210, currentTime);
+  oscillator.frequency.exponentialRampToValueAtTime(165, currentTime + 0.07);
+
+  filter.type = "lowpass";
+  filter.frequency.setValueAtTime(650, currentTime);
+  filter.Q.setValueAtTime(0.8, currentTime);
+
+  gainNode.gain.setValueAtTime(0.0001, currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.05, currentTime + 0.01);
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, currentTime + 0.08);
+
+  oscillator.connect(filter);
+  filter.connect(gainNode);
+  gainNode.connect(context.destination);
+  oscillator.start(currentTime);
+  oscillator.stop(currentTime + 0.09);
+}
 
 function sanitizeNickname(value) {
   const trimmed = value.trim();
@@ -299,6 +392,7 @@ function startTimer() {
 
 function startGame() {
   saveNickname();
+  unlockAudio();
 
   canvas.classList.remove("hidden");
   gameOverOverlay.classList.add("hidden");
@@ -615,8 +709,12 @@ canvas.addEventListener("click", () => {
       frame: 0,
       maxFrames: 10
     };
+    playHitSound();
     spawnTarget();
+    return;
   }
+
+  playMissSound();
 });
 
 dailyChallengeText.textContent = DAILY_CHALLENGE_TEXT;
