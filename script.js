@@ -1,8 +1,15 @@
 const startBtn = document.getElementById("startBtn");
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
+const gameOverOverlay = document.getElementById("gameOverOverlay");
+const scoreText = document.getElementById("scoreText");
+const bestText = document.getElementById("bestText");
+const playAgainBtn = document.getElementById("playAgainBtn");
+
+const BEST_SCORE_KEY = "cs2warmup-best-score";
 
 let score = 0;
+let bestScore = 0;
 let timeLeft = 60;
 let gameRunning = false;
 let timerInterval = null;
@@ -15,6 +22,15 @@ let crosshairPosition = {
   x: canvas.width / 2,
   y: canvas.height / 2
 };
+
+function loadBestScore() {
+  const savedBestScore = Number(localStorage.getItem(BEST_SCORE_KEY));
+  bestScore = Number.isFinite(savedBestScore) ? savedBestScore : 0;
+}
+
+function saveBestScore() {
+  localStorage.setItem(BEST_SCORE_KEY, String(bestScore));
+}
 
 function spawnTarget() {
   const size = 30;
@@ -51,6 +67,17 @@ function startTimer() {
   }, 1000);
 }
 
+function startGame() {
+  canvas.classList.remove("hidden");
+  gameOverOverlay.classList.add("hidden");
+
+  resetGame();
+  gameRunning = true;
+
+  startTimer();
+  render();
+}
+
 function stopGame() {
   gameRunning = false;
   clearInterval(timerInterval);
@@ -61,9 +88,16 @@ function stopGame() {
     animationFrameId = null;
   }
 
-  setTimeout(() => {
-    alert(`Time over! Final score: ${score}`);
-  }, 50);
+  if (score > bestScore) {
+    bestScore = score;
+    saveBestScore();
+  }
+
+  scoreText.textContent = `Your score: ${score}`;
+  bestText.textContent = `Best: ${bestScore}`;
+  gameOverOverlay.classList.remove("hidden");
+
+  render();
 }
 
 function drawTarget() {
@@ -143,15 +177,8 @@ function render() {
   }
 }
 
-startBtn.addEventListener("click", () => {
-  canvas.classList.remove("hidden");
-
-  resetGame();
-  gameRunning = true;
-
-  startTimer();
-  render();
-});
+startBtn.addEventListener("click", startGame);
+playAgainBtn.addEventListener("click", startGame);
 
 canvas.addEventListener("mousemove", (event) => {
   if (!gameRunning) return;
@@ -179,3 +206,5 @@ canvas.addEventListener("click", () => {
     spawnTarget();
   }
 });
+
+loadBestScore();

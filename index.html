@@ -15,6 +15,14 @@
 
     <div class="game-wrapper">
       <canvas id="gameCanvas" class="hidden" width="800" height="600"></canvas>
+
+      <div id="gameOverOverlay" class="overlay hidden" aria-live="polite">
+        <div class="overlay-panel">
+          <p id="scoreText" class="overlay-text">Your score: 0</p>
+          <p id="bestText" class="overlay-text">Best: 0</p>
+          <button id="playAgainBtn" class="start-button">Play Again</button>
+        </div>
+      </div>
     </div>
   </div>
 
