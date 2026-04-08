@@ -7,52 +7,69 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>CS2 Warmup</h1>
-    <p class="description">Simple aim trainer prototype</p>
-
-    <div class="daily-challenge" aria-live="polite">
-      <p class="daily-challenge-label">Daily Challenge</p>
-      <p id="dailyChallengeText" class="daily-challenge-text">Score 25 or more in one run</p>
-    </div>
-
-    <div class="player-controls">
-      <label for="nicknameInput" class="nickname-label">Nick:</label>
-      <input
-        id="nicknameInput"
-        class="nickname-input"
-        type="text"
-        maxlength="20"
-        placeholder="Enter your nick"
-      />
-      <button id="startBtn" class="start-button">START</button>
-    </div>
-
-    <p id="currentNick" class="current-nick">Nick: Player</p>
-
-    <div class="game-wrapper">
-      <canvas id="gameCanvas" class="hidden" width="800" height="600"></canvas>
-
-      <div id="gameOverOverlay" class="overlay hidden" aria-live="polite">
-        <div class="overlay-panel">
-          <p class="overlay-title">Round Over</p>
-          <p id="scoreText" class="overlay-score">0</p>
-
-          <div class="overlay-stats">
-            <p id="bestText" class="overlay-text">Best: 0</p>
-            <p id="nickText" class="overlay-text">Nick: Player</p>
-            <p id="challengeStatusText" class="overlay-text challenge-status">Challenge not completed</p>
-          </div>
-
-          <button id="playAgainBtn" class="start-button">Play Again</button>
-        </div>
+  <div class="app-shell">
+    <header class="platform-header">
+      <div class="brand">
+        <p class="brand-tag">Aim Platform</p>
+        <h1>CS2 Warmup</h1>
       </div>
-    </div>
+      <p class="platform-status">Online Mode: Local Solo</p>
+    </header>
 
-    <section class="leaderboard" aria-live="polite">
-      <h2 class="leaderboard-title">Local Hall of Fame</h2>
-      <ol id="leaderboardList" class="leaderboard-list"></ol>
+    <section class="hero-banner" aria-label="Season banner">
+      <p class="hero-season">Beta Season 1</p>
+      <p class="hero-description">
+        Trenuj refleks i precyzję na krótkich rundach aim trenera. Pobij swój rekord,
+        zalicz dzienne wyzwanie i wskocz do lokalnego Hall of Fame.
+      </p>
     </section>
+
+    <main class="platform-grid">
+      <section class="platform-card daily-card" aria-live="polite">
+        <h2 class="card-title">Daily Challenge</h2>
+        <p id="dailyChallengeText" class="daily-challenge-text">Score 25 or more in one run</p>
+      </section>
+
+      <section class="platform-card game-card">
+        <div class="player-controls">
+          <label for="nicknameInput" class="nickname-label">Nick:</label>
+          <input
+            id="nicknameInput"
+            class="nickname-input"
+            type="text"
+            maxlength="20"
+            placeholder="Enter your nick"
+          />
+          <button id="startBtn" class="start-button">START</button>
+        </div>
+
+        <p id="currentNick" class="current-nick">Nick: Player</p>
+
+        <div class="game-wrapper">
+          <canvas id="gameCanvas" class="hidden" width="800" height="600"></canvas>
+
+          <div id="gameOverOverlay" class="overlay hidden" aria-live="polite">
+            <div class="overlay-panel">
+              <p class="overlay-title">Round Over</p>
+              <p id="scoreText" class="overlay-score">0</p>
+
+              <div class="overlay-stats">
+                <p id="bestText" class="overlay-text">Best: 0</p>
+                <p id="nickText" class="overlay-text">Nick: Player</p>
+                <p id="challengeStatusText" class="overlay-text challenge-status">Challenge not completed</p>
+              </div>
+
+              <button id="playAgainBtn" class="start-button">Play Again</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="platform-card leaderboard" aria-live="polite">
+        <h2 class="card-title">Local Hall of Fame</h2>
+        <ol id="leaderboardList" class="leaderboard-list"></ol>
+      </section>
+    </main>
   </div>
 
   <script src="script.js"></script>
