@@ -42,6 +42,34 @@ h1 {
   color: #c9d1d9;
 }
 
+.player-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.nickname-label {
+  font-weight: bold;
+}
+
+.nickname-input {
+  width: 180px;
+  padding: 10px 12px;
+  border: 1px solid #2f3b4c;
+  border-radius: 8px;
+  background: #0f1621;
+  color: #e6edf3;
+  font-size: 0.95rem;
+}
+
+.current-nick {
+  margin: 14px 0 0;
+  color: #9bd7ff;
+  font-weight: bold;
+}
+
 .start-button {
   padding: 12px 28px;
   border: none;
