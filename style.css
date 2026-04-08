@@ -284,6 +284,27 @@ h1 {
   line-height: 1;
 }
 
+.overlay-feedback {
+  margin: -6px 0 16px;
+  font-size: 1.02rem;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  color: #9bd7ff;
+}
+
+.overlay-feedback.feedback-new-best {
+  color: #57f287;
+  text-transform: uppercase;
+}
+
+.overlay-feedback.feedback-away {
+  color: #ffd166;
+}
+
+.overlay-feedback.feedback-match {
+  color: #9bd7ff;
+}
+
 .overlay-stats {
   margin-bottom: 20px;
   padding: 12px;

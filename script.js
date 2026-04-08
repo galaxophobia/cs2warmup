@@ -5,6 +5,7 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const gameOverOverlay = document.getElementById("gameOverOverlay");
 const scoreText = document.getElementById("scoreText");
+const scoreFeedbackText = document.getElementById("scoreFeedbackText");
 const bestText = document.getElementById("bestText");
 const nickText = document.getElementById("nickText");
 const challengeStatusText = document.getElementById("challengeStatusText");
@@ -176,6 +177,30 @@ function updateChallengeStatusUI() {
   challengeStatusText.style.color = completed ? "#57f287" : "#ff7b72";
 }
 
+function updateScoreFeedbackUI(previousBestScore) {
+  scoreFeedbackText.classList.remove(
+    "feedback-new-best",
+    "feedback-away",
+    "feedback-match"
+  );
+
+  if (score > previousBestScore) {
+    scoreFeedbackText.textContent = "NEW BEST!";
+    scoreFeedbackText.classList.add("feedback-new-best");
+    return;
+  }
+
+  if (score === previousBestScore) {
+    scoreFeedbackText.textContent = "Matched your best";
+    scoreFeedbackText.classList.add("feedback-match");
+    return;
+  }
+
+  const pointsAway = previousBestScore - score;
+  scoreFeedbackText.textContent = `${pointsAway} point${pointsAway === 1 ? "" : "s"} away from your best`;
+  scoreFeedbackText.classList.add("feedback-away");
+}
+
 function spawnTarget() {
   const size = 24;
   const edgePadding = 20;
@@ -304,6 +329,8 @@ function stopGame() {
     animationFrameId = null;
   }
 
+  const previousBestScore = bestScore;
+
   if (score > bestScore) {
     bestScore = score;
     saveBestScore();
@@ -311,6 +338,7 @@ function stopGame() {
   trySaveLeaderboardScore();
 
   scoreText.textContent = `Score: ${score}`;
+  updateScoreFeedbackUI(previousBestScore);
   bestText.textContent = `Best: ${bestScore}`;
   nickText.textContent = `Nick: ${playerNickname}`;
   updateChallengeStatusUI();
