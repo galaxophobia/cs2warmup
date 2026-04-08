@@ -42,6 +42,31 @@ h1 {
   color: #c9d1d9;
 }
 
+.daily-challenge {
+  max-width: 420px;
+  margin: 0 auto 18px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #35506b;
+  background: rgba(15, 22, 33, 0.85);
+}
+
+.daily-challenge-label {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #9bb7d1;
+}
+
+.daily-challenge-text {
+  margin: 6px 0 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
 .player-controls {
   display: flex;
   align-items: center;
@@ -159,4 +184,8 @@ h1 {
 
 .overlay-text + .overlay-text {
   margin-top: 8px;
+}
+
+.challenge-status {
+  font-weight: 700;
 }

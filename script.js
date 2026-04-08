@@ -7,11 +7,15 @@ const gameOverOverlay = document.getElementById("gameOverOverlay");
 const scoreText = document.getElementById("scoreText");
 const bestText = document.getElementById("bestText");
 const nickText = document.getElementById("nickText");
+const challengeStatusText = document.getElementById("challengeStatusText");
+const dailyChallengeText = document.getElementById("dailyChallengeText");
 const playAgainBtn = document.getElementById("playAgainBtn");
 
 const BEST_SCORE_KEY = "cs2warmup-best-score";
 const NICKNAME_KEY = "cs2warmup-nickname";
 const DEFAULT_NICKNAME = "Player";
+const DAILY_CHALLENGE_TEXT = "Score 25 or more in one run";
+const DAILY_CHALLENGE_MIN_SCORE = 25;
 
 let score = 0;
 let bestScore = 0;
@@ -65,6 +69,19 @@ function loadBestScore() {
 
 function saveBestScore() {
   localStorage.setItem(BEST_SCORE_KEY, String(bestScore));
+}
+
+function isDailyChallengeCompleted() {
+  return score >= DAILY_CHALLENGE_MIN_SCORE;
+}
+
+function updateChallengeStatusUI() {
+  const completed = isDailyChallengeCompleted();
+
+  challengeStatusText.textContent = completed
+    ? "Challenge completed"
+    : "Challenge not completed";
+  challengeStatusText.style.color = completed ? "#57f287" : "#ff7b72";
 }
 
 function spawnTarget() {
@@ -187,6 +204,7 @@ function stopGame() {
   scoreText.textContent = `Score: ${score}`;
   bestText.textContent = `Best: ${bestScore}`;
   nickText.textContent = `Nick: ${playerNickname}`;
+  updateChallengeStatusUI();
   gameOverOverlay.classList.remove("hidden");
 
   render();
@@ -429,5 +447,7 @@ canvas.addEventListener("click", () => {
   }
 });
 
+dailyChallengeText.textContent = DAILY_CHALLENGE_TEXT;
+updateChallengeStatusUI();
 loadBestScore();
 loadNickname();
