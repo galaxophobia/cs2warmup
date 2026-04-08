@@ -17,7 +17,10 @@ let score = 0;
 let bestScore = 0;
 let timeLeft = 60;
 let gameRunning = false;
+let countdownActive = false;
+let countdownValue = "";
 let timerInterval = null;
+let countdownInterval = null;
 let animationFrameId = null;
 let playerNickname = DEFAULT_NICKNAME;
 
@@ -153,16 +156,23 @@ function startGame() {
   gameOverOverlay.classList.add("hidden");
 
   resetGame();
-  gameRunning = true;
+  gameRunning = false;
 
-  startTimer();
-  render();
+  startRenderLoop();
+  startCountdown(() => {
+    gameRunning = true;
+    startTimer();
+  });
 }
 
 function stopGame() {
   gameRunning = false;
+  countdownActive = false;
+  countdownValue = "";
   clearInterval(timerInterval);
   timerInterval = null;
+  clearInterval(countdownInterval);
+  countdownInterval = null;
 
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
@@ -303,6 +313,52 @@ function drawHitmarker() {
   hitmarkerFrames--;
 }
 
+function drawCountdown() {
+  if (!countdownActive || !countdownValue) return;
+
+  ctx.fillStyle = "rgba(10, 15, 21, 0.45)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = countdownValue === "GO" ? "#00ff66" : "#ffffff";
+  ctx.font = countdownValue === "GO" ? "900 88px Arial" : "900 100px Arial";
+  ctx.fillText(countdownValue, canvas.width / 2, canvas.height / 2);
+  ctx.textAlign = "start";
+  ctx.textBaseline = "alphabetic";
+}
+
+function startCountdown(onFinish) {
+  clearInterval(countdownInterval);
+
+  const steps = ["3", "2", "1", "GO"];
+  let stepIndex = 0;
+
+  countdownActive = true;
+  countdownValue = steps[stepIndex];
+
+  countdownInterval = setInterval(() => {
+    stepIndex++;
+
+    if (stepIndex >= steps.length) {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+      countdownActive = false;
+      countdownValue = "";
+      onFinish();
+      return;
+    }
+
+    countdownValue = steps[stepIndex];
+  }, 600);
+}
+
+function startRenderLoop() {
+  if (!animationFrameId) {
+    render();
+  }
+}
+
 function render() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -315,9 +371,12 @@ function render() {
   drawHitPulseEffect();
   drawCrosshair();
   drawHitmarker();
+  drawCountdown();
 
-  if (gameRunning) {
+  if (gameRunning || countdownActive) {
     animationFrameId = requestAnimationFrame(render);
+  } else {
+    animationFrameId = null;
   }
 }
 
@@ -328,7 +387,7 @@ nicknameInput.addEventListener("change", saveNickname);
 nicknameInput.addEventListener("blur", saveNickname);
 
 canvas.addEventListener("mousemove", (event) => {
-  if (!gameRunning) return;
+  if (!gameRunning && !countdownActive) return;
 
   crosshairPosition = {
     x: Math.max(0, Math.min(canvas.width, event.offsetX)),
