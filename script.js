@@ -274,6 +274,22 @@ function startGame() {
   startRenderLoop();
 }
 
+function isGameOverOverlayVisible() {
+  return !gameOverOverlay.classList.contains("hidden");
+}
+
+function isTypingInInput() {
+  const activeElement = document.activeElement;
+  if (!activeElement) return false;
+
+  const tagName = activeElement.tagName;
+  return (
+    tagName === "INPUT" ||
+    tagName === "TEXTAREA" ||
+    activeElement.isContentEditable
+  );
+}
+
 function stopGame() {
   gameRunning = false;
   countdownActive = false;
@@ -493,6 +509,19 @@ function render() {
 
 startBtn.addEventListener("click", startGame);
 playAgainBtn.addEventListener("click", startGame);
+
+document.addEventListener("keydown", (event) => {
+  if (!isGameOverOverlayVisible()) return;
+  if (isTypingInInput()) return;
+
+  const isEnter = event.key === "Enter";
+  const isSpace = event.key === " " || event.code === "Space";
+
+  if (!isEnter && !isSpace) return;
+
+  event.preventDefault();
+  startGame();
+});
 
 nicknameInput.addEventListener("change", saveNickname);
 nicknameInput.addEventListener("blur", saveNickname);
