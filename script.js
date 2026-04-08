@@ -63,7 +63,7 @@ function saveBestScore() {
 }
 
 function spawnTarget() {
-  const size = 30;
+  const size = 24;
 
   target = {
     x: Math.random() * (canvas.width - size),
@@ -125,7 +125,7 @@ function stopGame() {
     saveBestScore();
   }
 
-  scoreText.textContent = `Your score: ${score}`;
+  scoreText.textContent = `Score: ${score}`;
   bestText.textContent = `Best: ${bestScore}`;
   nickText.textContent = `Nick: ${playerNickname}`;
   gameOverOverlay.classList.remove("hidden");
@@ -148,11 +148,34 @@ function drawTarget() {
   ctx.fill();
 }
 
+function drawHudBox(x, y, width, height) {
+  ctx.fillStyle = "rgba(8, 12, 18, 0.85)";
+  ctx.fillRect(x, y, width, height);
+  ctx.strokeStyle = "rgba(135, 168, 196, 0.45)";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x, y, width, height);
+}
+
 function drawHud() {
-  ctx.fillStyle = "white";
-  ctx.font = "20px Arial";
-  ctx.fillText(`Score: ${score}`, 12, 30);
-  ctx.fillText(`Time: ${timeLeft}`, 12, 58);
+  drawHudBox(10, 10, 250, 98);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "700 30px Arial";
+  ctx.fillText(`Score: ${score}`, 20, 42);
+
+  ctx.fillStyle = "#ffd166";
+  ctx.font = "700 26px Arial";
+  ctx.fillText(`Time: ${timeLeft}s`, 20, 74);
+
+  ctx.fillStyle = "#9bd7ff";
+  ctx.font = "600 15px Arial";
+  ctx.fillText(`Best: ${bestScore}`, 20, 96);
+
+  ctx.textAlign = "right";
+  ctx.fillStyle = "#9bd7ff";
+  ctx.font = "600 15px Arial";
+  ctx.fillText(`Nick: ${playerNickname}`, canvas.width - 16, 30);
+  ctx.textAlign = "start";
 }
 
 function drawCrosshair() {
