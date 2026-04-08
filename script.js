@@ -158,11 +158,11 @@ function startGame() {
   resetGame();
   gameRunning = false;
 
-  startRenderLoop();
   startCountdown(() => {
     gameRunning = true;
     startTimer();
   });
+  startRenderLoop();
 }
 
 function stopGame() {
