@@ -1,9 +1,14 @@
 :root {
   --bg-main: #0d1117;
   --bg-panel: #161b22;
+  --bg-card: #101722;
   --text-main: #e6edf3;
+  --text-muted: #9bb7d1;
+  --accent: #57f287;
+  --accent-blue: #5bb8ff;
   --target: #ff3b3b;
   --canvas-bg: #0a0f15;
+  --border: #2f3b4c;
 }
 
 * {
@@ -13,58 +18,107 @@
 body {
   margin: 0;
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   font-family: Arial, sans-serif;
   background: radial-gradient(circle at top, #1a2433 0%, var(--bg-main) 55%);
   color: var(--text-main);
 }
 
-.container {
-  width: min(90vw, 900px);
-  text-align: center;
-  padding: 32px;
-  background: var(--bg-panel);
-  border: 1px solid #2f3b4c;
-  border-radius: 12px;
+.app-shell {
+  width: min(95vw, 1260px);
+  margin: 24px auto;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(11, 16, 24, 0.92);
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.45);
 }
 
+.platform-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 14px;
+  padding: 6px 4px 14px;
+  border-bottom: 1px solid rgba(79, 98, 118, 0.45);
+}
+
+.brand-tag {
+  margin: 0 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
 h1 {
-  margin: 0 0 12px;
-  font-size: 2.2rem;
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
   letter-spacing: 1px;
 }
 
-.description {
-  margin: 0 0 20px;
-  color: #c9d1d9;
-}
-
-.daily-challenge {
-  max-width: 420px;
-  margin: 0 auto 18px;
-  padding: 12px 14px;
-  border-radius: 10px;
-  border: 1px solid #35506b;
-  background: rgba(15, 22, 33, 0.85);
-}
-
-.daily-challenge-label {
+.platform-status {
   margin: 0;
-  font-size: 0.82rem;
+  font-size: 0.9rem;
+  color: #8fcbff;
   font-weight: 700;
-  letter-spacing: 1.4px;
+}
+
+.hero-banner {
+  margin-top: 16px;
+  padding: 18px 20px;
+  border-radius: 12px;
+  border: 1px solid #36516b;
+  background: linear-gradient(100deg, rgba(21, 32, 46, 0.95), rgba(13, 21, 30, 0.95));
+}
+
+.hero-season {
+  margin: 0;
   text-transform: uppercase;
-  color: #9bb7d1;
+  letter-spacing: 1.6px;
+  font-weight: 700;
+  color: #ffd166;
+}
+
+.hero-description {
+  margin: 10px 0 0;
+  max-width: 80ch;
+  color: #d5e2ee;
+  line-height: 1.4;
+}
+
+.platform-grid {
+  margin-top: 18px;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(220px, 260px) minmax(0, 1fr) minmax(240px, 300px);
+  align-items: start;
+}
+
+.platform-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-card);
+  padding: 14px;
+}
+
+.card-title {
+  margin: 0 0 12px;
+  font-size: 1.02rem;
+  text-transform: uppercase;
+  letter-spacing: 1.1px;
+  color: var(--accent-blue);
 }
 
 .daily-challenge-text {
-  margin: 6px 0 0;
+  margin: 0;
   font-size: 1.05rem;
   font-weight: 700;
   color: #ffffff;
+  line-height: 1.4;
+}
+
+.game-card {
+  text-align: center;
 }
 
 .player-controls {
@@ -82,7 +136,7 @@ h1 {
 .nickname-input {
   width: 180px;
   padding: 10px 12px;
-  border: 1px solid #2f3b4c;
+  border: 1px solid var(--border);
   border-radius: 8px;
   background: #0f1621;
   color: #e6edf3;
@@ -113,7 +167,7 @@ h1 {
 }
 
 .game-wrapper {
-  margin-top: 24px;
+  margin-top: 18px;
   display: flex;
   justify-content: center;
   position: relative;
@@ -123,19 +177,7 @@ h1 {
 }
 
 .leaderboard {
-  max-width: 520px;
-  margin: 24px auto 0;
-  padding: 14px 16px;
-  border: 1px solid #2f3b4c;
-  border-radius: 12px;
-  background: rgba(10, 15, 21, 0.62);
   text-align: left;
-}
-
-.leaderboard-title {
-  margin: 0 0 10px;
-  font-size: 1.1rem;
-  color: #9bd7ff;
 }
 
 .leaderboard-list {
@@ -147,7 +189,7 @@ h1 {
   display: grid;
   grid-template-columns: 28px 1fr auto;
   gap: 10px;
-  padding: 6px 0;
+  padding: 8px 0;
   border-bottom: 1px solid rgba(79, 98, 118, 0.35);
 }
 
@@ -166,14 +208,14 @@ h1 {
 }
 
 .leaderboard-score {
-  color: #57f287;
+  color: var(--accent);
   font-weight: 700;
 }
 
 .leaderboard-empty {
   list-style: none;
   margin-left: -22px;
-  color: #9bb7d1;
+  color: var(--text-muted);
   font-style: italic;
 }
 
@@ -213,7 +255,7 @@ h1 {
   text-transform: uppercase;
   letter-spacing: 1.8px;
   font-size: 0.95rem;
-  color: #9bb7d1;
+  color: var(--text-muted);
 }
 
 .overlay-score {
@@ -228,7 +270,7 @@ h1 {
   margin-bottom: 20px;
   padding: 12px;
   border-radius: 10px;
-  border: 1px solid #2f3b4c;
+  border: 1px solid var(--border);
   background: rgba(10, 15, 21, 0.5);
 }
 
@@ -243,4 +285,42 @@ h1 {
 
 .challenge-status {
   font-weight: 700;
+}
+
+@media (max-width: 1150px) {
+  .platform-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .daily-card,
+  .leaderboard {
+    text-align: center;
+  }
+
+  .leaderboard-list {
+    max-width: 430px;
+    margin: 0 auto;
+    text-align: left;
+  }
+}
+
+@media (max-width: 680px) {
+  .app-shell {
+    width: 100%;
+    margin: 0;
+    min-height: 100vh;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  .platform-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .overlay-panel {
+    min-width: min(92vw, 320px);
+    padding: 22px;
+  }
 }
