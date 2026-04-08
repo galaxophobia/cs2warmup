@@ -1,12 +1,17 @@
 const startBtn = document.getElementById("startBtn");
+const nicknameInput = document.getElementById("nicknameInput");
+const currentNick = document.getElementById("currentNick");
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const gameOverOverlay = document.getElementById("gameOverOverlay");
 const scoreText = document.getElementById("scoreText");
 const bestText = document.getElementById("bestText");
+const nickText = document.getElementById("nickText");
 const playAgainBtn = document.getElementById("playAgainBtn");
 
 const BEST_SCORE_KEY = "cs2warmup-best-score";
+const NICKNAME_KEY = "cs2warmup-nickname";
+const DEFAULT_NICKNAME = "Player";
 
 let score = 0;
 let bestScore = 0;
@@ -14,6 +19,7 @@ let timeLeft = 60;
 let gameRunning = false;
 let timerInterval = null;
 let animationFrameId = null;
+let playerNickname = DEFAULT_NICKNAME;
 
 let target = null;
 let hitmarkerFrames = 0;
@@ -22,6 +28,30 @@ let crosshairPosition = {
   x: canvas.width / 2,
   y: canvas.height / 2
 };
+
+function sanitizeNickname(value) {
+  const trimmed = value.trim();
+  return trimmed || DEFAULT_NICKNAME;
+}
+
+function updateNicknameUI() {
+  currentNick.textContent = `Nick: ${playerNickname}`;
+  nickText.textContent = `Nick: ${playerNickname}`;
+}
+
+function loadNickname() {
+  const savedNickname = localStorage.getItem(NICKNAME_KEY);
+  playerNickname = sanitizeNickname(savedNickname || DEFAULT_NICKNAME);
+  nicknameInput.value = playerNickname;
+  updateNicknameUI();
+}
+
+function saveNickname() {
+  playerNickname = sanitizeNickname(nicknameInput.value);
+  nicknameInput.value = playerNickname;
+  localStorage.setItem(NICKNAME_KEY, playerNickname);
+  updateNicknameUI();
+}
 
 function loadBestScore() {
   const savedBestScore = Number(localStorage.getItem(BEST_SCORE_KEY));
@@ -68,6 +98,8 @@ function startTimer() {
 }
 
 function startGame() {
+  saveNickname();
+
   canvas.classList.remove("hidden");
   gameOverOverlay.classList.add("hidden");
 
@@ -95,6 +127,7 @@ function stopGame() {
 
   scoreText.textContent = `Your score: ${score}`;
   bestText.textContent = `Best: ${bestScore}`;
+  nickText.textContent = `Nick: ${playerNickname}`;
   gameOverOverlay.classList.remove("hidden");
 
   render();
@@ -180,6 +213,9 @@ function render() {
 startBtn.addEventListener("click", startGame);
 playAgainBtn.addEventListener("click", startGame);
 
+nicknameInput.addEventListener("change", saveNickname);
+nicknameInput.addEventListener("blur", saveNickname);
+
 canvas.addEventListener("mousemove", (event) => {
   if (!gameRunning) return;
 
@@ -208,3 +244,4 @@ canvas.addEventListener("click", () => {
 });
 
 loadBestScore();
+loadNickname();

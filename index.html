@@ -11,7 +11,19 @@
     <h1>CS2 Warmup</h1>
     <p class="description">Simple aim trainer prototype</p>
 
-    <button id="startBtn" class="start-button">START</button>
+    <div class="player-controls">
+      <label for="nicknameInput" class="nickname-label">Nick:</label>
+      <input
+        id="nicknameInput"
+        class="nickname-input"
+        type="text"
+        maxlength="20"
+        placeholder="Enter your nick"
+      />
+      <button id="startBtn" class="start-button">START</button>
+    </div>
+
+    <p id="currentNick" class="current-nick">Nick: Player</p>
 
     <div class="game-wrapper">
       <canvas id="gameCanvas" class="hidden" width="800" height="600"></canvas>
@@ -20,6 +32,7 @@
         <div class="overlay-panel">
           <p id="scoreText" class="overlay-text">Your score: 0</p>
           <p id="bestText" class="overlay-text">Best: 0</p>
+          <p id="nickText" class="overlay-text">Nick: Player</p>
           <button id="playAgainBtn" class="start-button">Play Again</button>
         </div>
       </div>
