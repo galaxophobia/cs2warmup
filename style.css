@@ -326,6 +326,12 @@ h1 {
   font-weight: 700;
 }
 
+.overlay-hint {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
 @media (max-width: 900px) {
   .support-grid {
     grid-template-columns: 1fr;
