@@ -452,6 +452,7 @@ function stopGame() {
   nickText.textContent = `Nick: ${playerNickname}`;
   updateChallengeStatusUI();
   gameOverOverlay.classList.remove("hidden");
+  playAgainBtn.focus();
 
   render();
 }
